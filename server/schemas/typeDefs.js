@@ -12,6 +12,7 @@ const typeDefs = gql`
     thoughts: [Thought]
     friends: [User]
   }
+
   type Thought {
     _id: ID
     thoughtText: String
@@ -20,21 +21,39 @@ const typeDefs = gql`
     reactionCount: Int
     reactions: [Reaction]
   }
+
   type Reaction {
     _id: ID
     reactionBody: String
     createdAt: String
     username: String
   }
+
   type Query {
+    me: User
     users: [User]
     user(username: String!): User
     thoughts(username: String): [Thought]
     thought(_id: ID!): Thought
   }
+
+  type Mutation {
+    login(email: String!, password: String!): Auth
+    addUser(username: String!, email: String!, password: String!): Auth
+    addThought(thoughtText: String!): Thought
+    addReaction(thoughtId: ID!, reactionBody: String!): Thought
+    addFriend(friendId: ID!): User
+  }
+
+  type Auth {
+    token: ID!
+    user: User
+  }
 `;
 
 // FYI ! after the query parameter data type definitions indicates that for that query to be carried out, that data must exist. Otherwise, Apollo will return an error to the client making the request and the query won't even reach the resolver function associated with it.
+
+// FYI addReaction() will return the parent Thought instead of the newly created Reaction. This is because the front end will ultimately track changes on the thought level, not the reaction level.
 
 // export the typeDefs
 module.exports = typeDefs;
