@@ -5,11 +5,17 @@ import {
   InMemoryCache,
   createHttpLink,
 } from "@apollo/client";
+//We renamed BrowserRouter to Router to make it easier to work with.
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
 import Home from "./pages/Home";
+import Login from "./pages/Login";
+import NoMatch from "./pages/NoMatch";
+import SingleThought from "./pages/SingleThought";
+import Profile from "./pages/Profile";
+import Signup from "./pages/Signup";
 
 // we establish a new link to the GraphQL server at its /graphql endpoint with createHttpLink()
 const httpLink = createHttpLink({
@@ -31,13 +37,25 @@ function App() {
     // enable the entire application to interact with our Apollo Client instance: wrap the entire returning JSX code with <ApolloProvider>.
     // Because we're passing the client variable in as the value for the client prop in the provider, everything between the JSX tags will eventually have access to the server's API data through the client we set up
     <ApolloProvider client={client}>
-      <div className="flex-column justify-flex-start min-100-vh">
-        <Header />
-        <div className="container">
-          <Home />
+      {/* We've wrapped the <div className="flex-column"> element in a Router component, which makes all of the child components on the page aware of the client-side routing that can take place now: */}
+      <Router>
+        <div className="flex-column justify-flex-start min-100-vh">
+          <Header />
+          <div className="container">
+            {/* we place a singular Routes component that will hold several Route components that signify this part of the app as the place where content will change according to the URL route. When the route is /, the Home component will render here. When the route is /login, the Login component will render. */}
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              {/* The ? means this parameter is optional */}
+              <Route path="/profile/:username?" element={<Profile />} />
+              <Route path="/thought/:id" element={<SingleThought />} />
+              <Route path="*" element={<NoMatch />} />
+            </Routes>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
+      </Router>
     </ApolloProvider>
   );
 }

@@ -39,6 +39,11 @@ const startApolloServer = async (typeDefs, resolvers) => {
     res.sendFile(path.join(__dirname, "../client/build/index.html"));
   });
 
+  // With Express on the back end, you can define a catch-all route, meaning any route that hasn't been defined would be treated as a 404 and respond with your custom 404.html file.
+  app.get("*", (req, res) => {
+    res.status(404).sendFile(path.join(__dirname, "./public/404.html"));
+  });
+
   db.once("open", () => {
     app.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
