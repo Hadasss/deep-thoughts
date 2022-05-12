@@ -1,11 +1,12 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-
-import ThoughtList from "../components/ThoughtList";
 import { useQuery } from "@apollo/client";
 import { QUERY_USER } from "../utils/queries";
 
-const Profile = () => {
+import ThoughtList from "../components/ThoughtList";
+import FriendList from "../components/FriendList";
+
+const Profile = (props) => {
   // The useParams Hook retrieves the username from the URL, which is then passed to the useQuery Hook
   const { username: userParam } = useParams();
 
@@ -36,7 +37,13 @@ const Profile = () => {
           />
         </div>
 
-        <div className="col-12 col-lg-3 mb-3">{/* PRINT FRIEND LIST */}</div>
+        <div className="col-12 col-lg-3 mb-3">
+          <FriendList
+            username={user.username}
+            friendCount={user.friendCount}
+            friends={user.friends}
+          />
+        </div>
       </div>
     </div>
   );
