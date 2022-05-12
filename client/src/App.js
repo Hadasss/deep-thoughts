@@ -61,7 +61,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               {/* The ? means this parameter is optional */}
-              <Route path="/profile/:username?" element={<Profile />} />
+              <Route path="/profile/:username" element={<Profile />} />
               <Route path="/thought/:id" element={<SingleThought />} />
               <Route path="*" element={<NoMatch />} />
             </Routes>

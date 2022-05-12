@@ -35,7 +35,6 @@ const Signup = () => {
       const { data } = await addUser({
         variables: { ...formState },
       });
-
       // set our token to localStorage and bring us back to the homepage of the application upon a successful login
       Auth.login(data.addUser.token);
     } catch (e) {

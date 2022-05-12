@@ -7,6 +7,7 @@ const resolvers = {
     // We don't have to worry about error handling here because Apollo can infer if something goes wrong and will respond
 
     me: async (parent, args) => {
+      console.log({ args });
       if (context.user) {
         const userData = await User.findOne({})
           .select("-__V -password")
@@ -28,7 +29,12 @@ const resolvers = {
 
     // GET user by username
     user: async (parent, { username }) => {
-      return User.findOne({ username })
+      // IMPORTANT
+      let user =
+        username[0].toUpperCase() + username.substring(1, username.length);
+      console.log(user);
+
+      return User.findOne({ username: user })
         .select("-__V -password")
         .populate("friends")
         .populate("thoughts");
