@@ -42,7 +42,7 @@ export const QUERY_USER = gql`
       _id
       username
       email
-      friendCount
+      friendsCount
       friends {
         _id
         username
@@ -52,6 +52,50 @@ export const QUERY_USER = gql`
         thoughtText
         createdAt
         reactionCount
+      }
+    }
+  }
+`;
+
+// this query has a different structure. Because we aren't passing any variables to it, we can simply name the query, and GraphQL will handle the rest.
+export const QUERY_ME = gql`
+  {
+    me {
+      _id
+      username
+      email
+      friendsCount
+      thoughts {
+        _id
+        thoughtText
+        createdAt
+        reactionCount
+        reactions {
+          _id
+          createdAt
+          reactionBody
+          username
+        }
+      }
+      friends {
+        _id
+        username
+      }
+    }
+  }
+`;
+
+//for the homepage, one more query using the me query that returns less data.
+export const QUERY_ME_BASIC = gql`
+  {
+    me {
+      _id
+      username
+      email
+      friendsCount
+      friends {
+        _id
+        username
       }
     }
   }

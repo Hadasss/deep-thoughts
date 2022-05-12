@@ -7,6 +7,7 @@ import {
 } from "@apollo/client";
 //We renamed BrowserRouter to Router to make it easier to work with.
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { setContext } from "@apollo/client/link/context";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -23,9 +24,21 @@ const httpLink = createHttpLink({
   // we added a "proxy" key-value pair to the package.json in the client folder. With this proxy value in place, the Create React App team set up the development server to prefix all HTTP requests using relative paths with whatever value is provided to it. Now the HTTP requests will work in both development and production environments!
 });
 
+// create a middleware function that will retrieve the user token and combine it with the existing httpLink
+// FYI In this case, we don't need the first parameter offered by setContext(), which stores the current request object, but we still need to access the second one, we can use an underscore _ to serve as a placeholder for the first parameter.
+const authLink = setContext((_, { headers }) => {
+  // retrieve the token from localStorage
+  const token = localStorage.getItem("id_token");
+  return {
+    // set the HTTP request headers of every request to include the token, whether the request needs it or not. if the request doesn't need it, the server-side resolver function won't check for it.
+    headers: { ...headers, authorization: token ? `Bearer ${token}` : "" },
+  };
+});
+
 // After we create the link, we use the ApolloClient() constructor to instantiate the Apollo Client instance and create the connection to the API endpoint.
 const client = new ApolloClient({
-  link: httpLink,
+  // we need to combine the authLink and httpLink objects so that every request retrieves the token and sets the request headers before making the request to the API.
+  link: authLink.concat(httpLink),
   // We also instantiate a new cache object using new InMemoryCache()
   cache: new InMemoryCache(),
 });
@@ -48,7 +61,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               {/* The ? means this parameter is optional */}
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:username?" element={<Profile />} />
               <Route path="/thought/:id" element={<SingleThought />} />
               <Route path="*" element={<NoMatch />} />
             </Routes>
